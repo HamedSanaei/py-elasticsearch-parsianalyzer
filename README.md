@@ -13,7 +13,7 @@ sudo pip3 install pipenv
 ```
 sudo pipenv install
 ```
-3. (1)To install the exact same package that i've been used run the below command instead of the step (3.1)
+3. (2)To install the exact same package that i've been used run the below command instead of the abov step.
 ```
 sudo pipenv install --ignore-pipfile
 ```
