@@ -1,12 +1,13 @@
 import json
 from pathlib import Path
+import re
 
 
 def saveToJsonFile(data, dir_Path):
     # create new json File and Write data on it
-    with open(Path(dir_Path).absolute(), 'w') as jsonFile:
+    with open(Path(dir_Path).absolute(), 'w', encoding='utf-8') as jsonFile:
         # make it more readable and pretty
-        jsonFile.write(json.dumps(data, indent=4))
+        jsonFile.write(json.dumps(data, indent=4, ensure_ascii=False))
 
 
 def loadFromJsonFile(file_Path):
@@ -14,6 +15,21 @@ def loadFromJsonFile(file_Path):
     with open(Path(file_Path).absolute()) as f:
         data = json.load(f)
     return data
+
+
+def removeTabAndLineCharacter():
+    pass
+
+
+# it removes \t and \n and spaces
+def removeTabAndLineCharacterAndSpaces(input):
+    return re.sub(r'\s+', '', input)
+
+
+def removeHTMLTags(raw_html):
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
 
 
 def persianCharacterResolver(per_string):

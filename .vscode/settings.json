@@ -1,9 +1,9 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.pythonPath": "/home/hamed/.local/share/virtualenvs/IR-phase2-3YioMS9I/bin/python3",
+    "python.pythonPath": "/home/hamed/.local/share/virtualenvs/IR-phase2-3YioMS9I/bin/python",
     "code-runner.executorMap": {
         //"python": "/home/hamed/.local/share/virtualenvs/IR-phase2-3YioMS9I/bin/python3.8",
-        "python": "/home/hamed/.local/share/virtualenvs/IR-phase2-3YioMS9I/bin/python3",
+        "python": "/home/hamed/.local/share/virtualenvs/IR-phase2-3YioMS9I/bin/python",
     }
 }
