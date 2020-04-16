@@ -9,11 +9,11 @@
 ```
 sudo pip3 install pipenv
 ```
-3.1. Install dependencies from pipfile:
+3. Install dependencies from pipfile:
 ```
 sudo pipenv install
 ```
-3.2. To install the exact same package i've been used run the below command instead of the step (3.1)
+3. (1)To install the exact same package that i've been used run the below command instead of the step (3.1)
 ```
 sudo pipenv install --ignore-pipfile
 ```
