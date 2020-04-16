@@ -17,49 +17,50 @@ page_count = utility.persianCharacterResolver(query_page_count)
 
 
 # iterate over pages
-# news_urls = []
-# for i in range(1, page_count):
-#     url = search_url+"&p="+str(i)
-#     response = requests.get(url)
-#     news = soup.select(".archive_content .linear_news a")
-#     for n in news:
-#         news_urls.append(n.get("href", "problem"))
+news_urls = []
+for i in range(1, page_count):
+    url = search_url+"&p="+str(i)
+    response = requests.get(url)
+    news = soup.select(".archive_content .linear_news a")
+    for n in news:
+        news_urls.append(n.get("href", "problem"))
 
-# utility.saveToJsonFile(news_urls, Path("Data/news_urls.json"))
+utility.saveToJsonFile(news_urls, Path("Data/news_urls.json"))
 
 
 urls = utility.loadFromJsonFile("Data/news_urls.json")
 
 
 # this for is to slow
+news_data = []
 for news_url in urls:
     response = requests.get(sit_url+news_url)
     soup = BeautifulSoup(response.text, "html.parser")
 
     # # shortlink is complete
-    # short_link = soup.select_one(".link_en").get_text()
-    # short_link = utility.removeTabAndLineCharacterAndSpaces(short_link)
+    short_link = soup.select_one(".link_en").get_text()
+    short_link = utility.removeTabAndLineCharacterAndSpaces(short_link)
 
     # # id is complete
-    # news_id = soup.select_one(" .news_id_c").get_text()
-    # news_id = utility.persianCharacterResolver(news_id)
+    news_id = soup.select_one(" .news_id_c").get_text()
+    news_id = utility.persianCharacterResolver(news_id)
 
     # # title is complete
-    # title = soup.select_one(" .title").get_text()
-    # title = ' '.join(title.split())
+    title = soup.select_one(" .title").get_text()
+    title = ' '.join(title.split())
 
     # # category is complete
-    # category_fa = soup.select_one(
-    #     "#news > div.container.common-main.news-main > div > div.row > div.col1-news > div:nth-child(10) > div:nth-child(2) > div:nth-child(1) > div > a:nth-child(2)").get_text()
-    # category_Id = soup.select_one(
-    #     "#news > div.container.common-main.news-main > div > div.row > div.col1-news > div:nth-child(10) > div:nth-child(2) > div:nth-child(1) > div > a:nth-child(2)").get("href").split('=')[2]
+    category_fa = soup.select_one(
+        "#news > div.container.common-main.news-main > div > div.row > div.col1-news > div:nth-child(10) > div:nth-child(2) > div:nth-child(1) > div > a:nth-child(2)").get_text()
+    category_Id = soup.select_one(
+        "#news > div.container.common-main.news-main > div > div.row > div.col1-news > div:nth-child(10) > div:nth-child(2) > div:nth-child(1) > div > a:nth-child(2)").get("href").split('=')[2]
 
     # # tag is complete
-    # tags = soup.select(".tags_item")
-    # tag_array = [tag.get_text() for tag in tags]
+    tags = soup.select(".tags_item")
+    tag_array = [tag.get_text() for tag in tags]
 
     ## body is complete
-   ######## body = utility.removeHTMLTags(soup.select(".body").get_text())
+    body = utility.removeHTMLTags(soup.select_one(".body").get_text())
 
     ## date is complete
 
@@ -68,7 +69,19 @@ for news_url in urls:
     date_fa = ' '.join(soup.select_one(
         ".news_pdate_c").get_text().split()).replace(date_en, '').replace("تاریخ انتشار: ", '')
 
-    print(date_fa)
+    news_record = {"Id": news_id,
+                   "News_url": news_url,
+                   "Short_Link": short_link,
+                   "Title": title,
+                   "Cat_fa": category_fa,
+                   "Cat_Id": category_Id,
+                   "Tags": tag_array,
+                   "Body": body,
+                   "Date_en": date_en,
+                   "Date_fa": date_fa
+                   }
+    news_data.append(news_record)
+    print(news_id)
 
-
+utility.saveToJsonFile(news_data, "Data/news_data.json")
 # print()
