@@ -20,23 +20,23 @@ query_page_count = soup.select_one("#pager").get_text().split(' ')[3]
 page_count = utility.persianCharacterResolver(query_page_count)
 
 
-# # iterate over pages
-news_urls = []
-for i in range(1, page_count):
-    url = search_url+"&p="+str(i)
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
-    news = soup.select(".archive_content .linear_news a")
-    for n in news:
-        news_urls.append(n.get("href", "problem"))
+# # # iterate over pages
+# news_urls = []
+# for i in range(1, page_count):
+#     url = search_url+"&p="+str(i)
+#     response = requests.get(url)
+#     soup = BeautifulSoup(response.text, "html.parser")
+#     news = soup.select(".archive_content .linear_news a")
+#     for n in news:
+#         news_urls.append(n.get("href", "problem"))
 
-utility.saveToJsonFile(news_urls, Path("Data/news_urls.json"))
-print(time.time() - start_time)
+# utility.saveToJsonFile(news_urls, Path("Data/news_urls.json"))
+# print(time.time() - start_time)
 
 urls = utility.loadFromJsonFile("Data/news_urls.json")
 
 
-# this for is to slow
+# this for is too slow
 news_data = []
 for idx, news_url in enumerate(urls):
     response = requests.get(sit_url+news_url)
@@ -71,7 +71,7 @@ for idx, news_url in enumerate(urls):
     # date is complete
 
     date_en = utility.checkForNone(soup.select_one(
-        ".news_pdate_c >span:nth-child(1)")).get_text()
+        ".news_pdate_c >span:nth-child(2)")).get_text()
     date_fa = ' '.join(utility.checkForNone(soup.select_one(
         ".news_pdate_c")).get_text().split()).replace(date_en, '').replace("تاریخ انتشار: ", '')
 
