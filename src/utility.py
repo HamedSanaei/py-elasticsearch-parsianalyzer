@@ -50,3 +50,15 @@ def persianCharacterResolver(per_string):
         resolved_string += switcher.get(per_char, "")
 
     return int(resolved_string)
+
+
+def checkForNone(input):
+    if (input is None):
+        return NoneVal()
+    else:
+        return input
+
+
+class NoneVal:
+    def get_text(self):
+        return "None"

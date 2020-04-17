@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 import utility
+import time
+
+
+start_time = time.time()
 
 
 sit_url = "https://www.asriran.com"
@@ -16,24 +20,25 @@ query_page_count = soup.select_one("#pager").get_text().split(' ')[3]
 page_count = utility.persianCharacterResolver(query_page_count)
 
 
-# iterate over pages
+# # iterate over pages
 news_urls = []
 for i in range(1, page_count):
     url = search_url+"&p="+str(i)
     response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
     news = soup.select(".archive_content .linear_news a")
     for n in news:
         news_urls.append(n.get("href", "problem"))
 
 utility.saveToJsonFile(news_urls, Path("Data/news_urls.json"))
-
+print(time.time() - start_time)
 
 urls = utility.loadFromJsonFile("Data/news_urls.json")
 
 
 # this for is to slow
 news_data = []
-for news_url in urls:
+for idx, news_url in enumerate(urls):
     response = requests.get(sit_url+news_url)
     soup = BeautifulSoup(response.text, "html.parser")
 
@@ -51,23 +56,24 @@ for news_url in urls:
 
     # # category is complete
     category_fa = soup.select_one(
-        "#news > div.container.common-main.news-main > div > div.row > div.col1-news > div:nth-child(10) > div:nth-child(2) > div:nth-child(1) > div > a:nth-child(2)").get_text()
+        ".news_path > a:nth-child(2)").get_text()
     category_Id = soup.select_one(
-        "#news > div.container.common-main.news-main > div > div.row > div.col1-news > div:nth-child(10) > div:nth-child(2) > div:nth-child(1) > div > a:nth-child(2)").get("href").split('=')[2]
+        ".news_path > a:nth-child(2)").get("href").split('=')[2]
 
     # # tag is complete
-    tags = soup.select(".tags_item")
-    tag_array = [tag.get_text() for tag in tags]
+    tags = utility.checkForNone(soup.select(".tags_item"))
+    tag_array = [utility.checkForNone(tag).get_text() for tag in tags]
 
-    ## body is complete
-    body = utility.removeHTMLTags(soup.select_one(".body").get_text())
+    # body is complete
+    body = utility.removeHTMLTags(utility.checkForNone(
+        soup.select_one(".body")).get_text())
 
-    ## date is complete
+    # date is complete
 
-    date_en = soup.select_one(
-        "#news > div.container.common-main.news-main > div > div.row > div.col1-news > div:nth-child(10) > div.row.b_mrg > div.col-sm-6.col-ms-12 > div > span:nth-child(2)").get_text()
-    date_fa = ' '.join(soup.select_one(
-        ".news_pdate_c").get_text().split()).replace(date_en, '').replace("تاریخ انتشار: ", '')
+    date_en = utility.checkForNone(soup.select_one(
+        ".news_pdate_c >span:nth-child(1)")).get_text()
+    date_fa = ' '.join(utility.checkForNone(soup.select_one(
+        ".news_pdate_c")).get_text().split()).replace(date_en, '').replace("تاریخ انتشار: ", '')
 
     news_record = {"Id": news_id,
                    "News_url": news_url,
@@ -81,7 +87,9 @@ for news_url in urls:
                    "Date_fa": date_fa
                    }
     news_data.append(news_record)
-    print(news_id)
+    fff = float(idx)/float(4102)
+    print(str(idx)+"  " + str(float(idx)/float(4102)*100) + "  "+str(news_id))
 
 utility.saveToJsonFile(news_data, "Data/news_data.json")
+print(time.time() - start_time)
 # print()
