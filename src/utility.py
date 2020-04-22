@@ -62,3 +62,10 @@ def checkForNone(input):
 class NoneVal:
     def get_text(self):
         return "None"
+
+
+def convertToArrayDictionary(jsonPath):
+    data = []
+    with open(jsonPath.absolute()) as f:
+        data = json.load(f)
+    return data
