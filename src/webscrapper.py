@@ -61,7 +61,9 @@ for idx, news_url in enumerate(urls):
         ".news_path > a:nth-child(2)").get("href").split('=')[2]
 
     # # tag is complete
-    tags = utility.checkForNone(soup.select(".tags_item"))
+    # tags = utility.checkForNone(soup.select(".tags_item"))
+    # tag_array = [utility.checkForNone(tag).get_text() for tag in tags]
+    tags = soup.select(".tags_container .tags_title > a")
     tag_array = [utility.checkForNone(tag).get_text() for tag in tags]
 
     # body is complete
