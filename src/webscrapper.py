@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
-import utility
+from src import utility
 import time
 
 
@@ -10,10 +10,56 @@ start_time = time.time()
 
 sit_url = "https://www.asriran.com"
 search_url = "https://www.asriran.com/fa/archive?service_id=-1&sec_id=-1&cat_id=-1&rpp=100&from_date=1399/01/01&to_date=1399/01/28"
+
+
+string_args = input("""for crawl default news from 1st to 28th Farvardin 1399 type
+-default To specify start date type -sdate and for ending date select -edate and for 
+subject news type -subject. there are several news subject such as:
+-1 ==> all subject
+1  ==> political
+2  ==> foreign policy
+3  ==> international
+4  ==> economic
+5  ==> social
+6  ==> sport
+7  ==> scientific
+8  ==> cultural/art
+9  ==> accidents
+10 ==> health
+11 ==> technology & IT
+12 ==> hobby
+13 ==> general
+14 ==> users
+15 ==> chat cafe
+16 ==> travel
+(Hint: -edate 1399/01/01 -sdate 1385/01/01 -subject -1 )
+""")
+args = string_args.split()
+
+
+starting_date = None
+ending_date = None
+catt_idd = None
+
+
+for index, arg in enumerate(args):
+    if arg == "-sdate":
+        starting_date = args[index+1]
+    elif arg == "-edate":
+        ending_date = args[index+1]
+    elif arg == "-subject":
+        catt_idd = args[index+1]
+    elif arg == "-default":
+        search_url = "https://www.asriran.com/fa/archive?service_id=-1&sec_id=-1&cat_id=-1&rpp=100&from_date=1399/01/01&to_date=1399/01/28"
+
+if args.__contains__("-default"):
+    search_url = "https://www.asriran.com/fa/archive?service_id=-1&sec_id=-1&cat_id=-1&rpp=100&from_date=1399/01/01&to_date=1399/01/28"
+elif (starting_date is not None) and (ending_date is not None) and (catt_idd is not None):
+    search_url = f"https://www.asriran.com/fa/archive?service_id=1&sec_id=-1&cat_id={catt_idd}&rpp=100&from_date={starting_date}&to_date={ending_date}"
+
 response = requests.get(search_url)
 
 soup = BeautifulSoup(response.text, "html.parser")
-
 
 # get page numbers
 query_page_count = soup.select_one("#pager").get_text().split(' ')[3]
@@ -21,16 +67,16 @@ page_count = utility.persianCharacterResolver(query_page_count)
 
 
 # # # iterate over pages
-# news_urls = []
-# for i in range(1, page_count):
-#     url = search_url+"&p="+str(i)
-#     response = requests.get(url)
-#     soup = BeautifulSoup(response.text, "html.parser")
-#     news = soup.select(".archive_content .linear_news a")
-#     for n in news:
-#         news_urls.append(n.get("href", "problem"))
+news_urls = []
+for i in range(1, page_count):
+    url = search_url+"&p="+str(i)
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    news = soup.select(".archive_content .linear_news a")
+    for n in news:
+        news_urls.append(n.get("href", "problem"))
 
-# utility.saveToJsonFile(news_urls, Path("Data/news_urls.json"))
+utility.saveToJsonFile(news_urls, Path("Data/news_urls.json"))
 # print(time.time() - start_time)
 
 urls = utility.loadFromJsonFile("Data/news_urls.json")
